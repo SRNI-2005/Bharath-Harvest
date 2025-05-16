@@ -151,19 +151,33 @@ const FarmerMarket = ({ farmerID }) => {
           });
 
           const data = await response.json();
-          console.log(data);
 
-          if (data.success) {
+          if (data.success && data.predictions) {
+            // Handle the case where predictions might be nested or direct
+            const predictions = data.predictions.predictions || data.predictions;
+            
             setPredictedPrices({
-              minPrice: data.predictions.predictions.min_price,
-              maxPrice: data.predictions.predictions.max_price,
-              modalPrice: data.predictions.predictions.modal_price,
+              minPrice: predictions.min_price || 2000,
+              maxPrice: predictions.max_price || 3000,
+              modalPrice: predictions.modal_price || 2500,
             });
           } else {
-            console.error("Prediction failed:", data.error);
+            console.error("Prediction failed:", data.error || "Unknown error");
+            // Set fallback values to ensure UI doesn't break
+            setPredictedPrices({
+              minPrice: 2000,
+              maxPrice: 3000,
+              modalPrice: 2500,
+            });
           }
         } catch (error) {
           console.error("Error making prediction:", error);
+          // Set fallback values on error
+          setPredictedPrices({
+            minPrice: 2000,
+            maxPrice: 3000,
+            modalPrice: 2500,
+          });
         }
       };
 
@@ -187,7 +201,7 @@ const FarmerMarket = ({ farmerID }) => {
         <td className="px-6 py-4 text-[#283618]">{crop.cropVariety}</td>
         <td className="px-6 py-4">
           <div className="flex items-center">
-            <FontAwesomeIcon icon={faDollarSign} className="text-[#BC6C25] mr-2" />
+            {/* <FontAwesomeIcon icon={faDollarSign} className="text-[#BC6C25] mr-2" /> */}
             <span className="font-medium text-[#BC6C25]">₹{crop.cropPrice}</span>
           </div>
         </td>

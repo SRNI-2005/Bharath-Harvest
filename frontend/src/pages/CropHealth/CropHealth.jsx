@@ -15,10 +15,12 @@ import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import "./CropHealth.css";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const CropHealth = () => {
   const port = 5714;
-  const backendImageURL = "https://agri-ai-connect-backend.onrender.com/api/analyze-image";
-  const backendChatURL = "https://agri-ai-connect-backend.onrender.com/api/chat";
+  const backendImageURL = backendUrl +  "/api/analyze-image";
+  const backendChatURL = backendUrl + "/api/chat";
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState([]);

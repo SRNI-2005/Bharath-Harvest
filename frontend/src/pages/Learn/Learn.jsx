@@ -16,7 +16,7 @@ const resources = [
     ],
     level: "Beginner",
     color: "bg-[#606C38]",
-    link: "https://www.coursera.org/learn/crop-management-fundamentals", // Link to a course on Coursera
+    link: "https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/crop-management", // Link to a course on Coursera
   },
   {
     title: "Sustainable Farming Practices",
@@ -32,7 +32,7 @@ const resources = [
     ],
     level: "Intermediate",
     color: "bg-[#283618]",
-    link: "https://www.edx.org/course/sustainable-farming-practices", // Link to a course on edX
+    link: "https://www.coursera.org/learn/sustainable-agriculture", // Link to a course on edX
   },
   {
     title: "Modern Agricultural Technology",
@@ -202,13 +202,13 @@ const ResourceCard = ({ resource, index }) => {
               >
                 Start Learning
               </motion.button>
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05, backgroundColor: "rgba(254, 250, 224, 0.2)" }}
                 whileTap={{ scale: 0.95 }}
                 className="px-6 py-3 bg-[#FEFAE0]/10 text-[#FEFAE0] rounded-lg font-medium transition-all duration-300"
               >
                 Preview
-              </motion.button>
+              </motion.button> */}
             </div>
           </div>
         </div>

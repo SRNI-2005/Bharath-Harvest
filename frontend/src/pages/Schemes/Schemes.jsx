@@ -22,7 +22,7 @@ const schemes = [
     benefits:
       "Training on advanced farming techniques, provision of subsidies for adopting new technologies.",
     color: "bg-[#606C38]",
-    link: "https://www.agricoop.nic.in/en/schemes/national-mission-agricultural-extension-and-technology", // Link to official site
+    link: "https://agri-horti.assam.gov.in/schemes/national-mission-on-agricultre-extension-technology-nmaet", // Link to official site
   },
   {
     name: "Fasal Bima Yojana",
@@ -44,7 +44,7 @@ const schemes = [
     benefits:
       "Free soil testing and recommendations on crop rotation, fertilizers, and other practices to improve soil health.",
     color: "bg-[#283618]",
-    link: "https://www.agricoop.nic.in/en/schemes/soil-health-management", // Link to official site
+    link: "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=1988294", // Link to official site
   },
   {
     name: "Pradhan Mantri Fasal Bima Yojana",
