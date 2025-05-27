@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../../firebaseFunctions/firebaseConfig";
-import { ShoppingCart, LogOut, Settings, ShoppingBag, User, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faShoppingBag,
+  faSignOutAlt,
+  faBox,
+  faMoneyBill,
+  faChevronRight,
+  faLocationDot,
+  faCalendar,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function BuyerProfile() {
-  const { userID } = useParams(); // Get buyerID from the URL
+  const { userID } = useParams();
+  const [orders, setOrders] = useState([]);
+  const [totalSpent, setTotalSpent] = useState(0);
+
+  useEffect(() => {
+    const savedOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+    setOrders(savedOrders);
+    
+    const total = savedOrders.reduce((sum, order) => sum + order.total, 0);
+    setTotalSpent(total);
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -17,149 +37,130 @@ export default function BuyerProfile() {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 300, damping: 24 }
-    }
-  };
-
-  const dashboardItems = [
-    {
-      title: "Recent Orders",
-      icon: ShoppingBag,
-      description: "Track your purchases and order history",
-    },
-    {
-      title: "Account Details",
-      icon: User,
-      description: "Update your personal information and preferences",
-    },
-    {
-      title: "Upcoming Deliveries",
-      icon: Calendar,
-      description: "Check status of crops you've purchased",
-    },
-  ];
 
   return (
-    <motion.div 
-      className="min-h-screen bg-[#FEFAE0]/30 py-12 px-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <motion.div 
-        className="max-w-4xl mx-auto"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Profile Header */}
-        <motion.div
-          variants={itemVariants}
-          className="bg-[#606C38] rounded-t-2xl px-8 py-12 text-center shadow-lg"
-        >
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ 
-              type: "spring", 
-              stiffness: 260, 
-              damping: 20,
-              delay: 0.3 
-            }}
-            className="w-24 h-24 bg-[#FEFAE0] rounded-full flex justify-center items-center mx-auto mb-6 shadow-md"
-          >
-            <ShoppingCart className="w-12 h-12 text-[#283618]" />
-          </motion.div>
-          
-          <h2 className="text-3xl font-bold text-[#FEFAE0] mb-3">
-            Buyer Dashboard
-          </h2>
-          <motion.div 
-            className="h-1 w-24 bg-[#DDA15E] mx-auto rounded-full mb-4"
-            initial={{ width: 0 }}
-            animate={{ width: 96 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          />
-          <span className="text-[#FEFAE0]/80 bg-[#283618]/30 px-3 py-1 rounded-full text-sm">
-            ID: {userID}
-          </span>
-        </motion.div>
-
-        {/* Profile Content */}
-        <motion.div 
-          variants={itemVariants}
-          className="bg-white rounded-b-2xl p-8 shadow-lg"
-        >
-          <div className="space-y-8">
-            {dashboardItems.map((item, index) => (
-              <motion.div 
-                key={index}
-                className="group"
-                variants={itemVariants}
-                whileHover={{ 
-                  scale: 1.02,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <div className="flex items-center gap-4 mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#606C38]/10 flex items-center justify-center group-hover:bg-[#606C38]/20 transition-colors">
-                    <item.icon className="w-5 h-5 text-[#606C38]" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#283618]">
-                    {item.title}
-                  </h3>
-                </div>
-                
-                <div className="ml-14 p-4 bg-[#FEFAE0] rounded-lg border-l-4 border-[#DDA15E]">
-                  <p className="text-[#606C38]">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+    <div className="min-h-screen bg-[#FEFAE0]/30">
+      {/* Header */}
+      <div className="bg-[#283618] text-[#FEFAE0] py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-[#FEFAE0] rounded-full flex items-center justify-center">
+              <FontAwesomeIcon icon={faUser} className="text-2xl text-[#283618]" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Welcome Back!</h1>
+              <p className="text-[#FEFAE0]/80">ID: {userID}</p>
+            </div>
           </div>
+        </div>
+      </div>
 
-          {/* Actions */}
-          <motion.div 
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 mt-10 pt-8 border-t border-[#DDA15E]/20"
-          >
-            <motion.button 
-              className="flex-1 inline-flex justify-center items-center gap-2 px-4 py-3 bg-[#606C38] text-[#FEFAE0] rounded-lg shadow-md font-medium"
-              whileHover={{ scale: 1.03, backgroundColor: "#283618" }}
-              whileTap={{ scale: 0.97 }}
+      {/* Stats */}
+      <div className="max-w-6xl mx-auto px-4 -mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { icon: faBox, label: "Total Orders", value: orders.length },
+            { icon: faMoneyBill, label: "Total Spent", value: `₹${totalSpent}` },
+            { icon: faLocationDot, label: "Delivery Address", value: "Bangalore" },
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-lg p-6 shadow-md"
             >
-              <Settings className="w-5 h-5" />
-              Account Settings
-            </motion.button>
-            <motion.button
-              onClick={handleSignOut}
-              className="flex-1 inline-flex justify-center items-center gap-2 px-4 py-3 bg-[#BC6C25] text-[#FEFAE0] rounded-lg shadow-md font-medium"
-              whileHover={{ scale: 1.03, backgroundColor: "#9c5a1d" }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <LogOut className="w-5 h-5" />
-              Sign Out
-            </motion.button>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </motion.div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[#606C38]/10 rounded-full flex items-center justify-center">
+                  <FontAwesomeIcon icon={stat.icon} className="text-xl text-[#606C38]" />
+                </div>
+                <div>
+                  <p className="text-sm text-[#606C38]">{stat.label}</p>
+                  <p className="text-xl font-bold text-[#283618]">{stat.value}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Orders */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="p-6 border-b border-[#DDA15E]/20">
+            <h2 className="text-xl font-bold text-[#283618]">Recent Orders</h2>
+          </div>
+          <div className="divide-y divide-[#DDA15E]/20">
+            {orders.length > 0 ? (
+              orders.map((order) => (
+                <motion.div
+                  key={order.orderId}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-6 hover:bg-[#FEFAE0]/30 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <FontAwesomeIcon icon={faCalendar} className="text-[#606C38]" />
+                        <span className="text-[#606C38]">{formatDate(order.date)}</span>
+                      </div>
+                      <p className="font-medium text-[#283618]">Order #{order.orderId}</p>
+                      <p className="text-sm text-[#606C38]">
+                        {order.items.length} items • ₹{order.total}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                        {order.status}
+                      </span>
+                      <FontAwesomeIcon
+                        icon={faChevronRight}
+                        className="text-[#606C38]"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {order.items.map((item) => (
+                      <div key={item.cropID} className="bg-[#FEFAE0]/30 rounded-lg p-3">
+                        <p className="font-medium text-[#283618]">{item.cropName}</p>
+                        <p className="text-sm text-[#606C38]">
+                          {item.quantity}kg • ₹{item.cropPrice}/kg
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="p-12 text-center">
+                <FontAwesomeIcon
+                  icon={faShoppingBag}
+                  className="text-4xl text-[#606C38]/30 mb-4"
+                />
+                <p className="text-[#606C38]">No orders yet</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleSignOut}
+          className="mt-8 px-6 py-3 bg-[#BC6C25] text-[#FEFAE0] rounded-lg font-medium flex items-center justify-center gap-2 mx-auto"
+        >
+          <FontAwesomeIcon icon={faSignOutAlt} />
+          Sign Out
+        </motion.button>
+      </div>
+    </div>
   );
 }

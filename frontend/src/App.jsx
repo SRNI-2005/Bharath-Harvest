@@ -18,6 +18,8 @@ import LearningResourcesPage from "./pages/Learn/Learn";
 import { fetchFarmer } from "../firebaseFunctions/fetchUser";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
 import BuyerMarket from "./pages/MarketPlace/BuyerMarket";
+import ItemPage from "./pages/MarketPlace/ItemPage";
+import Checkout from "./pages/MarketPlace/Checkout";
 import PublicFarmerProfile from "./pages/Profile/PublicFarmerProfile";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop"; // Import ScrollToTop
 
@@ -93,6 +95,8 @@ function App() {
               )
             }
           />
+          <Route path="/marketplace/:cropId" element={<ItemPage />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="farmer/:farmerID" element={<PublicFarmerProfile />} />
         </Routes>
       </div>

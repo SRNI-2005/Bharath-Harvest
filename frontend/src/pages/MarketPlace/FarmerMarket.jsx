@@ -157,9 +157,9 @@ const FarmerMarket = ({ farmerID }) => {
             const predictions = data.predictions.predictions || data.predictions;
             
             setPredictedPrices({
-              minPrice: predictions.min_price || 2000,
-              maxPrice: predictions.max_price || 3000,
-              modalPrice: predictions.modal_price || 2500,
+              minPrice: predictions.min_price + 1500 || 2000,
+              maxPrice: predictions.max_price + 1500 || 3000,
+              modalPrice: predictions.modal_price + 1500 || 2500,
             });
           } else {
             console.error("Prediction failed:", data.error || "Unknown error");
