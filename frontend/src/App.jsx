@@ -22,12 +22,15 @@ import ItemPage from "./pages/MarketPlace/ItemPage";
 import Checkout from "./pages/MarketPlace/Checkout";
 import PublicFarmerProfile from "./pages/Profile/PublicFarmerProfile";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop"; // Import ScrollToTop
+import CropHealthModal, {useCropHealthModal} from "./pages/CropHealth/CropHealth";
+import PlantAssistantButton from "./components/PlantAssistantButton/PlantAssistantButton";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [farmer, setFarmer] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const {isOpen, closeModal, openModal} = useCropHealthModal();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -75,7 +78,6 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/crophealth" element={<CropHealth />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/schemes" element={<Schemes />} />
@@ -99,6 +101,10 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="farmer/:farmerID" element={<PublicFarmerProfile />} />
         </Routes>
+      </div>
+      <div>
+        <PlantAssistantButton openModal={openModal}/>
+        <CropHealthModal isOpen={isOpen} onClose={closeModal} />
       </div>
       <Footer />
     </>

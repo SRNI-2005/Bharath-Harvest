@@ -10,6 +10,7 @@ import {
   faCommentDots,
   faLightbulb,
   faSun,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,9 +18,8 @@ import "./CropHealth.css";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const CropHealth = () => {
-  const port = 5714;
-  const backendImageURL = backendUrl +  "/api/analyze-image";
+const CropHealthModal = ({ isOpen, onClose }) => {
+  const backendImageURL = backendUrl + "/api/analyze-image";
   const backendChatURL = backendUrl + "/api/chat";
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
@@ -34,6 +34,18 @@ const CropHealth = () => {
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
     }
   }, [chatLog]);
+
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onClose]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -70,15 +82,11 @@ const CropHealth = () => {
     formData.append("image", image);
 
     try {
-      const response = await axios.post(
-        `${backendImageURL}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${backendImageURL}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       const result = response?.data?.caption;
       setLoading(false);
@@ -137,56 +145,105 @@ const CropHealth = () => {
     "How to improve plant growth?",
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
+  const modalVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.8
+    },
     visible: {
       opacity: 1,
+      scale: 1,
       transition: {
-        duration: 0.5
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.2
       }
     }
+  };
+
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 }
   };
 
   const chatMessageVariants = {
-    initial: { 
+    initial: {
       opacity: 0,
-      y: 20
+      y: 20,
     },
-    animate: { 
+    animate: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.3
-      }
-    }
+        duration: 0.3,
+      },
+    },
   };
 
+  if (!isOpen) return null;
+
   return (
-    <motion.main 
-      className="h-full w-full flex flex-col bg-[#FEFAE0]"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <div className="max-w-7xl mx-auto w-full p-4 md:p-8">
-        <motion.div 
-          className="h-[85vh] w-full bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden"
-          initial={{ y: 20 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        variants={backdropVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        {/* Backdrop */}
+        <motion.div
+          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        />
+
+        {/* Modal Content */}
+        <motion.div
+          className="relative w-full max-w-4xl h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+          variants={modalVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
         >
+          {/* Header with close button */}
+          <div className="flex items-center justify-between p-4 border-b border-[#DDA15E]/20 bg-[#FEFAE0]/30">
+            <h2 className="text-xl font-bold text-[#283618] flex items-center">
+              <FontAwesomeIcon icon={faSeedling} className="mr-2 text-[#606C38]" />
+              Plant Health Assistant
+            </h2>
+            <motion.button
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-[#DDA15E]/20 transition-colors duration-200"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-[#283618] text-xl" />
+            </motion.button>
+          </div>
+
+          {/* Chat Content */}
           <div
             ref={chatLogRef}
-            className="h-[85vh] overflow-y-auto bg-[#FEFAE0]/50 border-b border-[#DDA15E]/20 p-2 sm:p-4"
+            className="flex-1 overflow-y-auto bg-[#FEFAE0]/50 p-4"
           >
             {chatLog.length === 0 ? (
-              <motion.div 
+              <motion.div
                 className="flex flex-col items-center justify-center h-full text-center p-4"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                transition={{ duration: 0.5 }}
               >
-                <motion.div 
+                <motion.div
                   className="mb-6 flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 bg-[#606C38]/10 rounded-full"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 2, ease: "easeInOut" }}
@@ -197,34 +254,34 @@ const CropHealth = () => {
                   />
                 </motion.div>
 
-                <motion.h2 
+                <motion.h3
                   className="text-xl sm:text-2xl font-bold text-[#283618] mb-4 flex items-center"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                 >
                   <FontAwesomeIcon
                     icon={faCommentDots}
                     className="mr-2 sm:mr-3 text-[#606C38]"
                   />
                   Welcome to Plant Health Assistant
-                </motion.h2>
+                </motion.h3>
 
-                <motion.p 
+                <motion.p
                   className="text-base sm:text-lg text-[#283618]/80 mb-6 max-w-md px-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
                 >
                   Got plant questions? I'm here to help! Upload an image or ask
                   about plant health.
                 </motion.p>
 
-                <motion.div 
+                <motion.div
                   className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto w-full px-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.9 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
                 >
                   {dummyPrompts.map((prompt, index) => (
                     <motion.div
@@ -247,9 +304,7 @@ const CropHealth = () => {
                         }
                         className="text-[#606C38]"
                       />
-                      <span className="text-sm text-[#283618]">
-                        {prompt}
-                      </span>
+                      <span className="text-sm text-[#283618]">{prompt}</span>
                     </motion.div>
                   ))}
                 </motion.div>
@@ -277,11 +332,13 @@ const CropHealth = () => {
                       transition={{ duration: 0.2 }}
                     >
                       <div className="flex items-center mb-2">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${
-                          entry.user === "You"
-                            ? "bg-[#606C38]/20"
-                            : "bg-[#DDA15E]/20"
-                        }`}>
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${
+                            entry.user === "You"
+                              ? "bg-[#606C38]/20"
+                              : "bg-[#DDA15E]/20"
+                          }`}
+                        >
                           <FontAwesomeIcon
                             icon={entry.user === "You" ? faSeedling : faLeaf}
                             className={
@@ -305,7 +362,7 @@ const CropHealth = () => {
             )}
 
             {loading && (
-              <motion.div 
+              <motion.div
                 className="flex justify-center items-center mt-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -316,11 +373,12 @@ const CropHealth = () => {
             )}
           </div>
 
-          <motion.div 
+          {/* Input Section */}
+          <motion.div
             className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white border-t border-[#DDA15E]/20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.5 }}
           >
             <motion.label
               htmlFor="image-upload"
@@ -372,9 +430,23 @@ const CropHealth = () => {
             </div>
           </motion.div>
         </motion.div>
-      </div>
-    </motion.main>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
-export default CropHealth;
+// Hook for managing modal state
+export const useCropHealthModal = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
+  return {
+    isOpen,
+    openModal,
+    closeModal,
+  };
+};
+
+export default CropHealthModal;

@@ -71,7 +71,6 @@ const Navbar = ({ farmer }) => {
 
   const navItems = [
     { path: "/marketplace", label: "Market Place" },
-    { path: "/crophealth", label: "Crop Health" },
     { path: "/learn", label: "Learning Resources" },
     { path: "/schemes", label: "Government Schemes" },
     { path: "/about", label: "About us" },
