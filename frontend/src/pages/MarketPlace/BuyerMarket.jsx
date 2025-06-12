@@ -46,7 +46,6 @@ export default function ModernMarketplace() {
   const UNSPLASH_API_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
 
 
-
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -619,8 +618,8 @@ export default function ModernMarketplace() {
       transition={{ duration: 0.5 }}
     >
       {/* Header */}
-      <div className="bg-[#283618] text-[#FEFAE0] sticky top-0 z-40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-[#283618] text-[#FEFAE0] top-0 z-40 shadow-md ">
+        <div className="max-w-7xl mx-auto px-4 py-4 pt-[100px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
               <motion.h1

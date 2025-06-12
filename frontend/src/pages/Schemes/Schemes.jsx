@@ -1,5 +1,7 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLeaf, faCheckCircle, faBullseye, faGift, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const schemes = [
   {
@@ -69,108 +71,123 @@ const schemes = [
   },
 ];
 
-const SchemeCard = ({ scheme, index }) => {
+const SchemeCard = ({ scheme, index, isSelected, onClick }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.7, delay: index * 0.1 }}
-      className="w-full"
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      whileHover={{ y: -5 }}
+      onClick={onClick}
+      className={`cursor-pointer transform transition-all duration-300 ${
+        isSelected ? 'col-span-2 row-span-2' : ''
+      }`}
     >
       <motion.div 
-        className="h-full rounded-2xl shadow-lg overflow-hidden transform-gpu"
-        whileHover={{ y: -8, scale: 1.02 }}
-        transition={{ duration: 0.3 }}
+        className="h-full rounded-2xl overflow-hidden bg-gradient-to-br from-[#283618] to-[#606C38] shadow-lg"
+        whileHover={{ boxShadow: "0 20px 40px rgba(40, 54, 24, 0.2)" }}
       >
-        <div className={`p-6 h-full ${scheme.color} text-[#FEFAE0]`}>
-          <div className="space-y-5">
-            <div className="relative mb-6">
-              <h2 className="text-2xl font-bold mb-2">
-                {scheme.name}
-              </h2>
+        <div className="p-6 h-full text-[#FEFAE0] relative">
+          {/* Decorative Elements */}
+          <motion.div 
+            className="absolute top-0 right-0 w-32 h-32 bg-[#DDA15E]/10 rounded-full blur-2xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          <div className="space-y-6 relative z-10">
+            {/* Header */}
+            <div className="">
               <motion.div 
-                className="absolute -bottom-2 left-0 h-1 bg-[#DDA15E] rounded-full" 
+                className="w-12 h-12 rounded-xl bg-[#DDA15E]/20 flex items-center justify-center mb-4"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.6 }}
+              >
+                <FontAwesomeIcon icon={faLeaf} className="text-[#DDA15E] text-xl" />
+              </motion.div>
+              <h2 className="text-2xl font-bold mb-2">{scheme.name}</h2>
+              <motion.div 
+                className="h-1 bg-[#DDA15E] rounded-full w-16"
                 initial={{ width: 0 }}
-                whileInView={{ width: "40%" }}
+                whileInView={{ width: 64 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
               />
             </div>
 
-            <div className="space-y-4">
-              <motion.div 
-                className="bg-[#FEFAE0]/10 backdrop-blur-md rounded-lg p-4 overflow-hidden relative"
-                whileHover={{ 
-                  scale: 1.03, 
-                  backgroundColor: "rgba(254, 250, 224, 0.15)" 
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <motion.div 
-                  className="absolute top-0 left-0 w-0 h-full bg-[#DDA15E]/10"
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.4 }}
-                />
-                <div className="relative z-10">
-                  <h3 className="text-lg font-semibold mb-2 text-[#DDA15E]">
-                    Description
-                  </h3>
-                  <p className="text-[#FEFAE0]/90">{scheme.description}</p>
-                </div>
-              </motion.div>
+            {/* Content */}
+            <AnimatePresence>
+              {isSelected ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-6"
+                >
+                  {/* Description */}
+                  <div className="bg-[#FEFAE0]/10 backdrop-blur-md rounded-xl p-5 space-y-3">
+                    <div className="flex items-center gap-3 text-[#DDA15E]">
+                      <FontAwesomeIcon icon={faCheckCircle} />
+                      <h3 className="font-semibold">Description</h3>
+                    </div>
+                    <p className="text-[#FEFAE0]/90 leading-relaxed">
+                      {scheme.description}
+                    </p>
+                  </div>
 
-              <motion.div 
-                className="bg-[#FEFAE0]/10 backdrop-blur-md rounded-lg p-4 overflow-hidden relative"
-                whileHover={{ 
-                  scale: 1.03, 
-                  backgroundColor: "rgba(254, 250, 224, 0.15)" 
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <motion.div 
-                  className="absolute top-0 left-0 w-0 h-full bg-[#DDA15E]/10"
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.4 }}
-                />
-                <div className="relative z-10">
-                  <h3 className="text-lg font-semibold mb-2 text-[#DDA15E]">
-                    Eligibility
-                  </h3>
-                  <p className="text-[#FEFAE0]/90">{scheme.eligibility}</p>
-                </div>
-              </motion.div>
+                  {/* Eligibility */}
+                  <div className="bg-[#FEFAE0]/10 backdrop-blur-md rounded-xl p-5 space-y-3">
+                    <div className="flex items-center gap-3 text-[#DDA15E]">
+                      <FontAwesomeIcon icon={faBullseye} />
+                      <h3 className="font-semibold">Eligibility</h3>
+                    </div>
+                    <p className="text-[#FEFAE0]/90 leading-relaxed">
+                      {scheme.eligibility}
+                    </p>
+                  </div>
 
-              <motion.div 
-                className="bg-[#FEFAE0]/10 backdrop-blur-md rounded-lg p-4 overflow-hidden relative"
-                whileHover={{ 
-                  scale: 1.03, 
-                  backgroundColor: "rgba(254, 250, 224, 0.15)" 
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <motion.div 
-                  className="absolute top-0 left-0 w-0 h-full bg-[#DDA15E]/10"
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.4 }}
-                />
-                <div className="relative z-10">
-                  <h3 className="text-lg font-semibold mb-2 text-[#DDA15E]">
-                    Benefits
-                  </h3>
-                  <p className="text-[#FEFAE0]/90">{scheme.benefits}</p>
-                </div>
-              </motion.div>
-            </div>
+                  {/* Benefits */}
+                  <div className="bg-[#FEFAE0]/10 backdrop-blur-md rounded-xl p-5 space-y-3">
+                    <div className="flex items-center gap-3 text-[#DDA15E]">
+                      <FontAwesomeIcon icon={faGift} />
+                      <h3 className="font-semibold">Benefits</h3>
+                    </div>
+                    <p className="text-[#FEFAE0]/90 leading-relaxed">
+                      {scheme.benefits}
+                    </p>
+                  </div>
 
-            <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: "#BC6C25" }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full mt-6 px-6 py-3 bg-[#DDA15E] text-[#283618] rounded-lg font-medium transition-all duration-300"
-              onClick={() => window.open(scheme.link, "_blank")} // Opens scheme link in a new tab
-            >
-              Apply Now
-            </motion.button>
+                  {/* Apply Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02, backgroundColor: "#BC6C25" }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full px-6 py-4 bg-[#DDA15E] text-[#283618] rounded-xl font-semibold shadow-lg transition-colors duration-300"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(scheme.link, "_blank");
+                    }}
+                  >
+                    Apply for Scheme
+                  </motion.button>
+                </motion.div>
+              ) : (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-[#FEFAE0]/80 line-clamp-3"
+                >
+                  {scheme.description}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </motion.div>
@@ -179,33 +196,97 @@ const SchemeCard = ({ scheme, index }) => {
 };
 
 const SchemesPage = () => {
+  const [selectedScheme, setSelectedScheme] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredSchemes = schemes.filter(scheme =>
+    scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    scheme.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="min-h-screen bg-[#FEFAE0] py-16 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#FEFAE0] to-[#FEFAE0]/90 py-20 px-6">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         className="max-w-7xl mx-auto"
       >
+        {/* Header Section */}
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-16 relative"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#283618] mb-4">
-            Government Schemes for Farmers
-          </h1>
-          <p className="text-lg text-[#606C38] max-w-2xl mx-auto">
-            Explore various government initiatives designed to support and empower the agricultural community
-          </p>
+          {/* Decorative Elements */}
+          <motion.div
+            className="absolute -top-10 left-1/4 w-64 h-64 bg-[#606C38]/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            className="absolute -bottom-10 right-1/4 w-64 h-64 bg-[#DDA15E]/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          <div className="relative pt-14">
+            <h1 className="text-5xl md:text-6xl font-bold text-[#283618] mb-6">
+              Agricultural Schemes
+            </h1>
+            <p className="text-xl text-[#606C38] max-w-2xl mx-auto mb-12">
+              Explore government initiatives designed to empower and support the farming community
+            </p>
+
+            {/* Search Input */}
+            <div className="relative max-w-xl mx-auto">
+              <input
+                type="text"
+                placeholder="Search schemes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-6 py-4 bg-white/80 backdrop-blur-md rounded-xl pl-12 pr-4 text-[#283618] placeholder-[#606C38]/60 focus:outline-none focus:ring-2 focus:ring-[#DDA15E] shadow-lg"
+              />
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#606C38]/60"
+              />
+            </div>
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {schemes.map((scheme, index) => (
-            <SchemeCard key={index} scheme={scheme} index={index} />
-          ))}
-        </div>
+        {/* Schemes Grid */}
+        <motion.div
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative"
+        >
+          <AnimatePresence>
+            {filteredSchemes.map((scheme, index) => (
+              <SchemeCard
+                key={scheme.name}
+                scheme={scheme}
+                index={index}
+                isSelected={selectedScheme === scheme.name}
+                onClick={() => setSelectedScheme(selectedScheme === scheme.name ? null : scheme.name)}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </motion.div>
     </div>
   );

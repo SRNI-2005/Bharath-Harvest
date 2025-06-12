@@ -7,9 +7,9 @@ import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import CropHealth from "./pages/CropHealth/CropHealth";
-import About from "./pages/About/About";
-import Contact from "./pages/Contact/Contact";
+import Support from "./pages/Support/Support";
 import Schemes from "./pages/Schemes/Schemes";
+import CropPredictor from "./pages/Support/CropPredictor";
 import PricePredictor from "./pages/Prediction/Predictor";
 import Login from "./pages/Login/Login";
 import FarmerProfile from "./pages/Profile/FarmerProfile";
@@ -76,12 +76,10 @@ function App() {
       <div className="h-100vh">
         {/* Integrate ScrollToTop */}
         <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/schemes" element={<Schemes />} />
-          <Route path="/test" element={<PricePredictor />} />
+        <Routes>          <Route path="/" element={<Home />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/schemes" element={<Schemes />} />          <Route path="/test" element={<PricePredictor />} />
+          <Route path="/predictor" element={<CropPredictor />} />
           <Route path="/login" element={<Login />} />
           <Route path={"/learn"} element={<LearningResourcesPage />} />
           <Route

@@ -28,16 +28,22 @@ const ItemPage = () => {
   const fetchCropImages = async (cropName) => {
     try {
       const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${cropName}+agriculture&per_page=5`,
+        `https://api.unsplash.com/search/photos?query=${cropName}+agriculture&per_page=5&orientation=landscape`,
         {
           headers: {
-            Authorization: import.meta.env.VITE_PEXELS_API_KEY,
+            Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`
           },
         }
       );
       const data = await response.json();
-      if (data.photos) {
-        setImages(data.photos.map(photo => photo.src.large));
+      if (data.results) {
+        setImages(data.results.map(photo => ({
+          url: photo.urls.regular,
+          credit: {
+            name: photo.user.name,
+            link: photo.user.links.html
+          }
+        })));
       }
     } catch (error) {
       console.error("Error fetching images:", error);
@@ -120,8 +126,8 @@ const ItemPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FEFAE0]/30 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-[#FEFAE0]/30 py-20">
+      <div className="max-w-7xl mx-auto px-4 py-5">
         <motion.button
           onClick={() => navigate(-1)}
           className="mb-6 flex items-center text-[#606C38] hover:text-[#283618]"
@@ -133,21 +139,50 @@ const ItemPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column - Images */}
-          <div className="bg-white rounded-lg p-6 shadow-md">
-            <div className="aspect-square bg-[#FEFAE0] rounded-lg overflow-hidden">
+          <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="aspect-square bg-[#FEFAE0] rounded-xl overflow-hidden relative group">
               {images.length > 0 ? (
-                <motion.img
-                  key={selectedImage}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  src={images[selectedImage]}
-                  alt={crop.cropName}
-                  className="w-full h-full object-cover"
-                />
+                <>
+                  <motion.img
+                    key={selectedImage}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    src={images[selectedImage].url}
+                    alt={crop.cropName}
+                    className="w-full h-full object-cover"
+                  />
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+                  >
+                    Photo by{" "}
+                    <a 
+                      href={images[selectedImage].credit.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-[#DDA15E]"
+                    >
+                      {images[selectedImage].credit.name}
+                    </a>
+                    {" "}on Unsplash
+                  </motion.div>
+                </>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <FontAwesomeIcon icon={faLeaf} className="text-8xl text-[#606C38]/30" />
+                  <motion.div
+                    animate={{ 
+                      rotate: 360,
+                      scale: [1, 1.2, 1]
+                    }}
+                    transition={{ 
+                      rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                      scale: { duration: 2, repeat: Infinity }
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faLeaf} className="text-8xl text-[#606C38]/30" />
+                  </motion.div>
                 </div>
               )}
             </div>
@@ -157,13 +192,13 @@ const ItemPage = () => {
                   key={index}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`aspect-square rounded-lg overflow-hidden cursor-pointer border-2 ${
+                  className={`aspect-square rounded-xl overflow-hidden cursor-pointer border-2 ${
                     selectedImage === index ? 'border-[#DDA15E]' : 'border-transparent'
-                  }`}
+                  } hover:border-[#DDA15E]/50 transition-colors duration-200`}
                   onClick={() => setSelectedImage(index)}
                 >
                   <img
-                    src={image}
+                    src={image.url}
                     alt={`${crop.cropName} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -343,4 +378,4 @@ const ItemPage = () => {
   );
 };
 
-export default ItemPage; 
+export default ItemPage;

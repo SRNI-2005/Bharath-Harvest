@@ -1,158 +1,286 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSeedling,
   faLightbulb,
-  faSun,
   faLeaf,
-  faPaperPlane,
   faArrowRight,
   faTractor,
-  faHandHoldingHeart,
-  faUsers,
   faChartLine,
-  faCloud,
-  faNewspaper,
+  faRobot,
+  faMagnifyingGlassChart,
+  faShield,
+  faUserGroup
 } from "@fortawesome/free-solid-svg-icons";
+import cropsImage from "../../assets/crops_soil.png";
 import "./Home.css";
 
-const Hero = () => (
-  <section className="relative min-h-[90vh] overflow-hidden bg-[#FEFAE0]">
-    <div className="absolute w-full h-full bg-pattern opacity-5 z-0"></div>
-    
-    <div className="max-w-7xl mx-auto px-6 py-20 md:py-28 grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="flex flex-col justify-center"
-      >
-        <motion.h1 
-          className="text-4xl md:text-6xl font-bold text-[#283618] mb-6"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          BharathHarvest: <span className="text-[#606C38]">Empowering</span> Farmers
-        </motion.h1>
+const FeatureCard = ({ icon, title, description, delay }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    className="relative p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/40 shadow-lg hover:bg-white/80 hover:shadow-2xl hover:scale-105 hover:border-white/60 transition-all duration-300 group"
+  >
+    <motion.div
+      className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#606C38] to-[#283618] flex items-center justify-center mb-4"
+      whileHover={{ scale: 1.05, rotate: 5 }}
+    >
+      <FontAwesomeIcon icon={icon} className="text-[#FEFAE0] text-xl" />
+    </motion.div>
+    <h3 className="text-xl font-semibold text-[#283618] mb-2">{title}</h3>
+    <p className="text-[#606C38]/80">{description}</p>
+    <motion.div
+      className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#606C38]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      initial={false}
+    />
+  </motion.div>
+);
+
+const Hero = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  return (
+    <section className="relative min-h-screen overflow-hidden bg-[#FEFAE0]">
+      {/* Background Effects */}
+      <div className="absolute inset-0">
+        {/* <motion.div
+          className="absolute top-20 left-20 w-72 h-72 bg-[#606C38] rounded-full mix-blend-multiply filter blur-2xl opacity-15"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        /> */}
+        {/* <motion.div
+          className="absolute bottom-20 right-20 w-96 h-96 bg-[#DDA15E] rounded-full mix-blend-multiply filter blur-2xl opacity-15"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [0, -90, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        /> */}
         
-        <motion.h2
-          className="text-xl md:text-2xl text-[#283618]/80 mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          Farming Made Easier
-        </motion.h2>
+        {/* Decorative floating elements */}
+        {/* <motion.div
+          className="absolute top-40 right-40 w-24 h-24"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 45, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        > */}
+          {/* <div className="w-full h-full bg-gradient-to-br from-[#DDA15E]/40 to-[#BC6C25]/40 backdrop-blur-sm rounded-lg border border-white/40 transform rotate-45" />
+        </motion.div> */}
         
-        <motion.p
-          className="text-lg text-[#283618]/70 leading-relaxed mb-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+        <motion.div
+          className="absolute bottom-60 left-40 w-16 h-16"
+          animate={{
+            y: [0, 15, 0],
+            rotate: [0, -30, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         >
-          BharathHarvest is here to support farmers with crop sales, modern farming
-          techniques, weather updates, and more. Empowering the agricultural
-          community, one farmer at a time.
-        </motion.p>
-        
-        <motion.div 
-          className="flex flex-wrap gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <motion.button
-            className="px-6 py-3 bg-[#606C38] text-[#FEFAE0] rounded-md font-medium"
-            whileHover={{ scale: 1.05, backgroundColor: "#283618" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-          >
-            Get Started
-          </motion.button>
-          <motion.button
-            className="px-6 py-3 border-2 border-[#606C38] text-[#606C38] rounded-md font-medium"
-            whileHover={{ scale: 1.05, backgroundColor: "rgba(96, 108, 56, 0.1)" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-          >
-            Explore Features
-          </motion.button>
+          <div className="w-full h-full bg-gradient-to-tr from-[#606C38]/40 to-[#283618]/40 backdrop-blur-sm rounded-full border border-white/40" />
         </motion.div>
-      </motion.div>
-      
-      <motion.div
-        className="flex items-center justify-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-      >
-        <div className="relative w-full max-w-md">
-          <motion.div 
-            className="absolute -top-6 -left-6 w-24 h-24 rounded-2xl bg-[#BC6C25]/20 z-0"
-            animate={{ 
-              rotate: [0, 15, 0, -15, 0],
-              scale: [1, 1.1, 1, 1.1, 1]
-            }}
-            transition={{ duration: 10, repeat: Infinity }}
-          />
-          <motion.div 
-            className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-[#606C38]/20 z-0"
-            animate={{ 
-              rotate: [0, -15, 0, 15, 0],
-              scale: [1, 1.1, 1, 1.1, 1]
-            }}
-            transition={{ duration: 12, repeat: Infinity }}
-          />
-          
-          <div className="relative z-10 bg-gradient-to-br from-[#283618]/10 to-[#DDA15E]/20 rounded-xl shadow-lg overflow-hidden p-8">
-            <motion.div 
-              className="w-full max-w-md"
+      </div>
+
+      {/* Main Content Container */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-[250px]">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center backdrop-blur-3xl bg-[#]/70 rounded-3xl p-8 shadow-2xl border border-white/40"
+        >
+          {/* Hero Content */}
+          <div className="space-y-6 ">
+            <motion.div className="space-y-3">
+              <motion.h1
+                className="text-5xl md:text-7xl font-bold text-[#283618] leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                Future of
+                <motion.span
+                  className="block text-[#606C38] mt-2 relative"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                >
+                  Agriculture
+                  <motion.div
+                    className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-[#DDA15E] to-[#BC6C25] rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                  />
+                </motion.span>
+              </motion.h1>
+
+              <motion.p
+                className="text-xl text-[#606C38]/80 leading-relaxed max-w-2xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                Revolutionizing farming with AI-powered insights, smart market
+                connections, and sustainable agricultural practices.
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              className="flex flex-wrap gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+            >
+              <motion.button
+                className="group px-8 py-4 bg-gradient-to-r from-[#606C38] to-[#283618] text-[#FEFAE0] rounded-xl font-medium relative overflow-hidden"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-[#DDA15E] to-[#BC6C25] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  initial={false}
+                />
+                <span className="relative flex items-center gap-2">
+                  Get Started
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
+                  </motion.div>
+                </span>
+              </motion.button>
+
+              <motion.button
+                className="px-8 py-4 border-2 border-[#606C38] text-[#606C38] rounded-xl font-medium relative overflow-hidden group"
+                whileHover={{
+                  scale: 1.02,
+                  backgroundColor: "rgba(96, 108, 56, 0.05)",
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-[#606C38]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  initial={false}
+                />
+                <span className="relative">Learn More</span>
+              </motion.button>
+            </motion.div>
+            
+            <motion.div
+              className="mt-12 flex gap-6 items-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.8 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
             >
-              <ul className="space-y-4">
-                {[
-                  { icon: faSeedling, text: "Buy and sell crops easily" },
-                  { icon: faLightbulb, text: "Learn modern farming techniques" },
-                  { icon: faSun, text: "Access our own chatbot" },
-                  { icon: faLeaf, text: "Analyze crop prices" },
-                  { icon: faPaperPlane, text: "Get notified about government schemes" },
-                ].map((feature, index) => (
-                  <motion.li
-                    key={index}
-                    className="flex items-center gap-4 p-3 rounded-lg bg-white bg-opacity-70 backdrop-blur-sm hover:bg-opacity-90 transition-all"
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-                    whileHover={{ 
-                      x: 5, 
-                      backgroundColor: "rgba(255, 255, 255, 0.9)" 
-                    }}
+              <div className="flex -space-x-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-12 h-12 rounded-full bg-gradient-to-br from-[#606C38] to-[#283618] border-2 border-white flex items-center justify-center"
+                    whileHover={{ scale: 1.1 }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#606C38] flex items-center justify-center text-[#FEFAE0]">
-                      <FontAwesomeIcon icon={feature.icon} />
-                    </div>
-                    <span className="text-[#283618] font-medium">{feature.text}</span>
-                  </motion.li>
+                    <FontAwesomeIcon icon={faUserGroup} className="text-[#FEFAE0] text-sm" />
+                  </motion.div>
                 ))}
-              </ul>
+              </div>
+              <div>
+                <p className="text-[#283618] font-semibold">Join 10,000+ farmers</p>
+                <p className="text-[#606C38]/70 text-sm">Growing together sustainably</p>
+              </div>
             </motion.div>
           </div>
-        </div>
-      </motion.div>
-    </div>
-    
-    <motion.div 
-      className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-r from-[#606C38] via-[#DDA15E] to-[#283618] opacity-70"
-      initial={{ scaleX: 0 }}
-      animate={{ scaleX: 1 }}
-      transition={{ duration: 1.5, delay: 0.5 }}
-    />
-  </section>
-);
+
+          {/* Image and Feature Grid Container */}
+          <div className="relative">
+            {/* Background Image */}
+            {/* Feature Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { icon: faRobot, title: "AI Insights", description: "Smart crop recommendations" },
+                { icon: faMagnifyingGlassChart, title: "Market Analysis", description: "Real-time price tracking" },
+                { icon: faShield, title: "Crop Protection", description: "Disease prevention tips" },
+                { icon: faLightbulb, title: "Smart Planning", description: "Optimal farming schedules" }
+              ].map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  className="group relative bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-sm rounded-xl p-4 border border-white/40 hover:bg-white/95 transition-all duration-300 overflow-hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-[#606C38]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={false}
+                  />
+                  <div className="relative z-10">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#606C38] to-[#283618] flex items-center justify-center mb-3">
+                      <FontAwesomeIcon icon={feature.icon} className="text-[#FEFAE0] text-lg" />
+                    </div>
+                    <h3 className="font-medium text-[#283618] mb-1">{feature.title}</h3>
+                    <p className="text-sm text-[#606C38]/70">{feature.description}</p>
+                  </div>
+                  <motion.div
+                    className="absolute -bottom-1 -right-1 w-20 h-20 bg-gradient-to-tr from-[#606C38]/5 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-150"
+                    initial={false}
+                  />
+                </motion.div>
+              ))}
+            </div>
+            
+          </div>
+        </motion.div>
+        {/* Full screen background image */}
+        <motion.div
+          className="fixed inset-0 -z-50 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+        >
+          {/* <img
+            src={cropsImage}
+            alt="Agricultural crops"
+            className="w-full h-screen object-cover mix-blend-multiply opacity-30"
+          /> */}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
 
 const Stats = () => {
   const variants = {
@@ -163,52 +291,47 @@ const Stats = () => {
       transition: {
         delay: i * 0.2,
         duration: 0.8,
-        ease: "easeOut"
-      }
-    })
+        ease: "easeOut",
+      },
+    }),
   };
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.h2 
-          className="text-3xl md:text-4xl font-bold text-center text-[#283618] mb-16"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8 }}
-        >
-          Our <span className="text-[#BC6C25]">Impact</span> in Numbers
-        </motion.h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section className="pt-8 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-[#FEFAE0]/30 to-white">
+        <motion.div
+          className="absolute top-0 right-0 w-1/2 h-full bg-[#606C38]/10 backdrop-blur-lg rounded-l-full"
+          initial={{ x: "100%" }}
+          whileInView={{ x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { icon: faTractor, value: "10,000+", label: "Active Farmers" },
-            { icon: faHandHoldingHeart, value: "50,000+", label: "Successful Trades" },
-            { icon: faUsers, value: "100+", label: "Expert Consultants" },
+            { label: "Farmers Empowered", value: "10,000+" },
+            { label: "Crop Varieties", value: "200+" },
+            { label: "Success Rate", value: "95%" }
           ].map((stat, index) => (
             <motion.div
-              key={index}
-              custom={index}
+              key={stat.label}
               variants={variants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              className="bg-[#FEFAE0] rounded-lg p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+              viewport={{ once: true }}
+              custom={index}
+              className="text-center backdrop-blur-sm bg-white/70 p-8 rounded-2xl border border-white/40 shadow-lg hover:bg-white/80 hover:shadow-2xl transition-all duration-300"
             >
-              <motion.div 
-                className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-[#606C38]/10 z-0 group-hover:bg-[#606C38]/20 transition-colors duration-300"
-                whileHover={{ scale: 1.2 }}
-              />
-              
-              <div className="relative z-10">
-                <div className="w-16 h-16 mb-6 rounded-lg bg-[#DDA15E]/20 flex items-center justify-center text-[#BC6C25]">
-                  <FontAwesomeIcon icon={stat.icon} size="2x" />
-                </div>
-                
-                <h3 className="text-3xl font-bold text-[#283618] mb-2">{stat.value}</h3>
-                <p className="text-[#606C38]">{stat.label}</p>
-              </div>
+              <motion.div
+                className="text-5xl font-bold text-[#283618] mb-2 relative"
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#606C38]/20 to-[#DDA15E]/20 blur-lg" />
+                <span className="relative">{stat.value}</span>
+              </motion.div>
+              <p className="text-[#606C38]/80 text-lg relative z-10">{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -218,167 +341,187 @@ const Stats = () => {
 };
 
 const Features = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.8 }
-    }
-  };
-
   return (
-    <section className="py-24 bg-[#283618]">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.h2 
-          className="text-3xl md:text-4xl font-bold text-center text-[#FEFAE0] mb-6"
-          initial={{ opacity: 0, y: -20 }}
+    <section className="py-4 relative overflow-hidden">
+      {/* Decorative elements */}
+      {/* <div className="absolute inset-0">
+        <div className="absolute top-0 w-full h-40 bg-gradient-to-b from-white to-transparent" />
+        <div className="absolute bottom-0 w-full h-40 bg-gradient-to-t from-white to-transparent" />
+        <motion.div
+          className="absolute top-20 left-[20%] w-64 h-64 bg-[#606C38] rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 45, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-[20%] w-72 h-72 bg-[#DDA15E] rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [0, -45, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+      </div> */}
+
+      <div className="max-w-7xl mx-auto px-6 relative z-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center max-w-3xl mx-auto mb-8 backdrop-blur-sm bg-white/70 p-6 rounded-2xl border border-white/40 shadow-lg"
         >
-          Why Choose BharathHarvest?
-        </motion.h2>
-        
-        <motion.p 
-          className="text-lg text-center text-[#FEFAE0]/80 mb-16 max-w-3xl mx-auto"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          Discover the tools and resources that make us the preferred platform for farmers across India
-        </motion.p>
-        
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-        >
+          <motion.div
+            initial={{ scale: 0.95 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="relative"
+          >
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#606C38]/20 to-[#DDA15E]/20 blur-lg rounded-lg" />
+            <h2 className="text-4xl md:text-5xl font-bold text-[#283618] mb-6 relative">
+              Transforming Agriculture with Technology
+            </h2>
+          </motion.div>
+          <p className="text-xl text-[#606C38]/80">
+            Discover how our intelligent platform helps farmers make data-driven decisions
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             {
+              icon: faLeaf,
+              title: "Smart Crop Planning",
+              description: "AI-powered recommendations for optimal crop selection and rotation strategies",
+              delay: 0.2
+            },
+            {
               icon: faChartLine,
-              title: "Market Insights",
-              description:
-                "Real-time crop price analytics and market trends to help you make informed decisions.",
+              title: "Market Intelligence",
+              description: "Real-time market insights and price predictions for better selling decisions",
+              delay: 0.3
+            },
+            {
+              icon: faUserGroup,
+              title: "Expert Network",
+              description: "Connect with agricultural experts and successful farmers in your region",
+              delay: 0.4
+            },
+            {
+              icon: faTractor,
+              title: "Resource Optimization",
+              description: "Optimize resource usage with smart scheduling and monitoring tools",
+              delay: 0.5
+            },
+            {
+              icon: faSeedling,
+              title: "Yield Enhancement",
+              description: "Proven techniques and tips to maximize your crop yield sustainably",
+              delay: 0.6
             },
             {
               icon: faLightbulb,
-              title: "Chat Bot",
-              description:
-                "Your own chatbot for agricultural advisories and better crop planning.",
-            },
-            {
-              icon: faNewspaper,
-              title: "Latest Updates",
-              description:
-                "Stay informed about agricultural policies and government schemes.",
-            },
-          ].map((feature, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="bg-[#FEFAE0] rounded-lg p-8 hover:shadow-xl transition-all duration-300 relative overflow-hidden"
-              whileHover={{ y: -5 }}
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#DDA15E]" />
-              
-              <div className="w-14 h-14 rounded-lg bg-[#606C38] flex items-center justify-center text-[#FEFAE0] mb-6">
-                <FontAwesomeIcon icon={feature.icon} size="lg" />
-              </div>
-              
-              <h3 className="text-xl font-bold text-[#283618] mb-4">{feature.title}</h3>
-              <p className="text-[#283618]/80">{feature.description}</p>
-              
-              <motion.div 
-                className="mt-6 flex items-center gap-2 text-[#606C38] font-medium cursor-pointer group"
-                whileHover={{ x: 5 }}
-              >
-                <span>Learn more</span>
-                <FontAwesomeIcon 
-                  icon={faArrowRight} 
-                  className="transition-transform group-hover:translate-x-1" 
-                />
-              </motion.div>
-            </motion.div>
+              title: "Innovation Hub",
+              description: "Stay updated with the latest agricultural technologies and practices",
+              delay: 0.7
+            }
+          ].map(feature => (
+            <FeatureCard key={feature.title} {...feature} />
           ))}
-        </motion.div>
+        </div>
+      </div>
+
+      {/* Decorative background pattern */}
+      <div className="-z-10 opacity-5">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <pattern id="pattern" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+            <path
+              d="M0 16 L16 0 L32 16 L16 32 Z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#pattern)" />
+        </svg>
       </div>
     </section>
   );
 };
 
-const CallToAction = () => (
-  <section className="py-20 bg-[#FEFAE0] relative overflow-hidden">
-    <div className="max-w-7xl mx-auto px-6 relative z-10">
-      <div className="max-w-3xl mx-auto text-center">
-        <motion.h2 
-          className="text-3xl md:text-5xl font-bold text-[#283618] mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8 }}
-        >
-          Join Our Growing Community
-        </motion.h2>
-        
-        <motion.p 
-          className="text-xl text-[#283618]/70 mb-10"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          Connect with farmers, experts, and agriculture enthusiasts
-        </motion.p>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <motion.button
-            className="px-8 py-4 bg-[#BC6C25] text-white rounded-lg text-xl font-semibold"
-            whileHover={{ scale: 1.05, backgroundColor: "#a35a1f" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-          >
-            Join Now
-          </motion.button>
-        </motion.div>
-      </div>
+const CTA = () => (
+  <section className="py-8 relative overflow-hidden bg-[#FEFAE0]">
+    <div className="absolute inset-0 bg-[#FEFAE0]">
+      <motion.div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-[#606C38] via-[#DDA15E] to-[#283618] rounded-full mix-blend-multiply filter blur-3xl opacity-10"
+        animate={{
+          scale: [1, 1.2, 1],
+          rotate: [0, 180, 0],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
     </div>
-    
-    <div className="absolute top-0 left-0 w-full h-full">
-      <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-[#606C38]/10 z-0" />
-      <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-[#DDA15E]/10 z-0" />
-      <div className="absolute top-1/3 right-1/4 w-24 h-24 rounded-full bg-[#283618]/10 z-0" />
-      <div className="absolute bottom-1/3 left-1/4 w-20 h-20 rounded-full bg-[#BC6C25]/10 z-0" />
+
+    <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+      <motion.h2
+        className="text-4xl md:text-5xl font-bold text-[#283618] mb-6"
+        initial={{ opacity: 1, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        Ready to Transform Your Farming?
+      </motion.h2>
+      
+      <motion.p
+        className="text-xl text-[#606C38]/80 mb-6"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+      >
+        Join thousands of farmers who are already using our platform to improve their yields and profits
+      </motion.p>
+
+      <motion.button
+        className="px-8 py-4 bg-gradient-to-r from-[#606C38] to-[#283618] text-[#FEFAE0] rounded-xl font-medium relative overflow-hidden group"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.4 }}
+      >
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-[#DDA15E] to-[#BC6C25] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          initial={false}
+        />
+        <span className="relative">Start Your Journey</span>
+      </motion.button>
     </div>
   </section>
 );
 
 const Home = () => {
   return (
-    <div className="overflow-hidden">
+    <div className="bg-[#FEFAE0] space-y-4">
       <Hero />
-      <Stats />
       <Features />
-      <CallToAction />
+      <Stats />
+      <CTA />
     </div>
   );
 };
