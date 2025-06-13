@@ -54,6 +54,8 @@ app.post("/api/analyze-image", upload.single("image"), async (req, res) => {
        3. Provide prevention, cure for the disease if any \
        4. Common areas and locations where this disease is found \
        5. Provide important notes of this disease \
+       6. Give it in short points and also specific to farmers \
+       7. Give best crop prediction for that particular region if asked \
       ",
     ]);
 

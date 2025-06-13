@@ -24,6 +24,7 @@ import PublicFarmerProfile from "./pages/Profile/PublicFarmerProfile";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop"; // Import ScrollToTop
 import CropHealthModal, {useCropHealthModal} from "./pages/CropHealth/CropHealth";
 import PlantAssistantButton from "./components/PlantAssistantButton/PlantAssistantButton";
+import Community from "./pages/Community/Community";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -76,12 +77,15 @@ function App() {
       <div className="h-100vh">
         {/* Integrate ScrollToTop */}
         <ScrollToTop />
-        <Routes>          <Route path="/" element={<Home />} />
+        <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/schemes" element={<Schemes />} />          <Route path="/test" element={<PricePredictor />} />
+          <Route path="/schemes" element={<Schemes />} />
+          <Route path="/test" element={<PricePredictor />} />
           <Route path="/predictor" element={<CropPredictor />} />
           <Route path="/login" element={<Login />} />
           <Route path={"/learn"} element={<LearningResourcesPage />} />
+          <Route path="/community" element={<Community />} />
           <Route
             path="/profile/:userID"
             element={farmer ? <FarmerProfile /> : <BuyerProfile />}

@@ -8,7 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShop, faBook, faLandmark, faPhone, faUser, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faShop, faBook, faLandmark, faPhone, faUser, faChartLine, faComments } from "@fortawesome/free-solid-svg-icons";
 
 // Logo component with updated styling
 const Logo = ({ shrink }) => (
@@ -88,6 +88,7 @@ const Navbar = ({ farmer }) => {
     // { path: "/schemes", label: "Schemes", icon: faLandmark },
     { path: "/predictor", label: "Predictor", icon: faChartLine },
     { path: "/support", label: "Support", icon: faPhone },
+    { path: "/community", label: "Community", icon: faComments },
   ];
 
   const navVariants = {

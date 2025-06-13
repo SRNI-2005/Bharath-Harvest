@@ -1,14 +1,99 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faLeaf, faChartLine, faWater, faFlask,
   faSeedling, faMoneyBillWave, faSpinner,
-  faExclamationTriangle, faArrowRight
+  faExclamationTriangle, faArrowRight, faMapMarkerAlt,
+  faCalendarAlt, faMountain, faRuler, faCheckCircle,
+  faSync, faInfoCircle, faStar
 } from '@fortawesome/free-solid-svg-icons';
 
 const regions = ['Bangalore', 'Mysore', 'Hubli', 'Belgaum', 'Gulbarga', 'Mangalore'];
+const seasons = ['Kharif', 'Rabi'];
+
+const StepIndicator = ({ currentStep, totalSteps }) => (
+  <div className="flex justify-center space-x-2 mb-8">
+    {Array.from({ length: totalSteps }, (_, i) => (
+      <motion.div
+        key={i}
+        className={`h-2 rounded-full ${i <= currentStep ? 'bg-[#606C38]' : 'bg-[#DDA15E]/30'}`}
+        initial={{ width: i === currentStep ? 20 : 12 }}
+        animate={{ width: i === currentStep ? 40 : 12 }}
+        transition={{ duration: 0.3 }}
+      />
+    ))}
+  </div>
+);
+
+const FeatureCard = ({ icon, title, value, unit = "", loading }) => (
+  <motion.div
+    className="bg-white/90 rounded-2xl p-6 shadow-lg border border-[#DDA15E]/20"
+    whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)" }}
+  >
+    <div className="flex items-center space-x-4">
+      <div className="bg-[#606C38]/10 p-3 rounded-xl">
+        <FontAwesomeIcon icon={icon} className="text-2xl text-[#606C38]" />
+      </div>
+      <div>
+        <h3 className="text-[#283618] font-medium">{title}</h3>
+        {loading ? (
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="h-6 w-24 bg-[#DDA15E]/20 rounded-md"
+          />
+        ) : (
+          <p className="text-xl font-bold text-[#606C38]">
+            {value} {unit}
+          </p>
+        )}
+      </div>
+    </div>
+  </motion.div>
+);
+
+const CropCard = ({ crop, onClick, isSelected }) => (
+  <motion.div
+    className={`relative p-6 rounded-2xl cursor-pointer transition-all ${
+      isSelected 
+        ? 'bg-[#606C38] text-[#FEFAE0] shadow-lg border-2 border-[#606C38]' 
+        : 'bg-white/80 text-[#283618] border border-[#DDA15E]/20 hover:border-[#606C38]'
+    }`}
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onClick}
+    layout
+  >
+    <div className="flex items-start justify-between">
+      <div>
+        <h3 className={`text-lg font-semibold mb-2 ${isSelected ? 'text-[#FEFAE0]' : 'text-[#283618]'}`}>
+          {crop.name}
+        </h3>
+        <div className="space-y-2">
+          <p className={`text-sm ${isSelected ? 'text-[#FEFAE0]/90' : 'text-[#606C38]'}`}>
+            <FontAwesomeIcon icon={faChartLine} className="mr-2" />
+            Yield: {crop['Predicted Yield (q/ha)'].toFixed(2)} q/ha
+          </p>
+          <p className={`text-sm ${isSelected ? 'text-[#FEFAE0]/90' : 'text-[#606C38]'}`}>
+            <FontAwesomeIcon icon={faMoneyBillWave} className="mr-2" />
+            Revenue: ₹{crop['Revenue (INR)'].toLocaleString()}
+          </p>
+        </div>
+      </div>
+      {isSelected && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="absolute top-4 right-4"
+        >
+          <FontAwesomeIcon icon={faCheckCircle} className="text-[#FEFAE0] text-xl" />
+        </motion.div>
+      )}
+    </div>
+  </motion.div>
+);
 
 const BackgroundDecoration = ({ className }) => (
   <motion.div
@@ -27,6 +112,7 @@ const BackgroundDecoration = ({ className }) => (
 );
 
 const CropPredictor = () => {
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     n_value: '',
     p_value: '',
@@ -38,7 +124,8 @@ const CropPredictor = () => {
   const [loading, setLoading] = useState(false);
   const [plans, setPlans] = useState(null);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
+  const [selectedCrops, setSelectedCrops] = useState([]);
+  const [predictionStats, setPredictionStats] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -85,6 +172,32 @@ const CropPredictor = () => {
   const calculateAverageYield = (entries) => {
     return entries.reduce((sum, entry) => sum + entry['Predicted Yield (q/ha)'], 0) / entries.length;
   };
+  const handleNext = () => {
+    if (step < 2) setStep(step + 1);
+  };
+
+  const handleBack = () => {
+    if (step > 0) setStep(step - 1);
+  };
+
+  const handleCropSelect = (crop) => {
+    setSelectedCrops(prev => {
+      if (prev.includes(crop)) {
+        return prev.filter(c => c !== crop);
+      }
+      return [...prev, crop];
+    });
+  };
+
+  useEffect(() => {
+    if (plans) {
+      setPredictionStats({
+        totalRevenue: selectedCrops.reduce((sum, crop) => sum + crop['Revenue (INR)'], 0),
+        averageYield: selectedCrops.reduce((sum, crop) => sum + crop['Predicted Yield (q/ha)'], 0) / (selectedCrops.length || 1),
+        selectedCount: selectedCrops.length
+      });
+    }
+  }, [selectedCrops]);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#FEFAE0] to-[#FEFAE0]/70 py-20 pt-[110px] px-4">
@@ -141,7 +254,7 @@ const CropPredictor = () => {
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
                 <label className="block text-[#283618] font-medium mb-2">
-                  Nitrogen (N) Value
+                  Nitrogen (N) Value (kg/ha)
                 </label>
                 <div className="relative group">
                   <FontAwesomeIcon 
@@ -168,7 +281,7 @@ const CropPredictor = () => {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <label className="block text-[#283618] font-medium mb-2">
-                  Phosphorus (P) Value
+                  Phosphorus (P) Value (kg/ha)
                 </label>
                 <div className="relative group">
                   <FontAwesomeIcon 
@@ -195,7 +308,7 @@ const CropPredictor = () => {
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
                 <label className="block text-[#283618] font-medium mb-2">
-                  Potassium (K) Value
+                  Potassium (K) Value (kg/ha)
                 </label>
                 <div className="relative group">
                   <FontAwesomeIcon 
@@ -512,7 +625,7 @@ const CropPredictor = () => {
                               className="bg-[#606C38]/5 rounded-lg p-3"
                               whileHover={{ scale: 1.02 }}
                             >
-                              <p className="text-sm text-[#606C38] mb-1">Initial NPK Levels</p>
+                              <p className="text-sm text-[#606C38] mb-1">Initial NPK Levels (kg/ha)</p>
                               <p className="font-medium text-[#283618]">
                                 {formatFertilizer(entry['NPK Before'])}
                               </p>
@@ -521,7 +634,7 @@ const CropPredictor = () => {
                               className="bg-[#DDA15E]/5 rounded-lg p-3"
                               whileHover={{ scale: 1.02 }}
                             >
-                              <p className="text-sm text-[#606C38] mb-1">Required Fertilizer</p>
+                              <p className="text-sm text-[#606C38] mb-1">Required Fertilizer (kg/ha)</p>
                               <p className="font-medium text-[#283618]">
                                 {formatFertilizer(entry['Fertilizer Added'])}
                               </p>

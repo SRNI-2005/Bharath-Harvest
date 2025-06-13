@@ -190,7 +190,7 @@ const FarmerMarket = ({ farmerID }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        className="hover:bg-[#FEFAE0]/50 transition-colors"
+        className="hover:bg-[#FEFAE0]/50 transition-colors "
       >
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="flex items-center">
@@ -299,7 +299,7 @@ const FarmerMarket = ({ farmerID }) => {
         animate="visible"
       >
         <motion.div 
-          className="bg-white rounded-xl shadow-xl overflow-hidden mb-8"
+          className=" rounded-xl shadow-xl overflow-hidden mb-8 pt-20"
           variants={itemVariants}
         >
           <div className="bg-[#283618] p-6 flex flex-col md:flex-row justify-between items-center">
